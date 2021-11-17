@@ -4,6 +4,6 @@ from .serializers import ImagePostSerializer
 from .models import ImagePost
 
 
-class HeroViewSet(viewsets.ModelViewSet):
+class ImagePostViewSet(viewsets.ModelViewSet):
     queryset = ImagePost.objects.all().order_by('image')
     serializer_class = ImagePostSerializer
