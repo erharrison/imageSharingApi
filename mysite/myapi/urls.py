@@ -8,5 +8,7 @@ router.register('posts', views.ImagePostViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path("profile/<str:username>/", views.profile, name="profile"),
+    path("followToggle/<str:author>/",views.follow_toggle, name="followToggle")
 ]
