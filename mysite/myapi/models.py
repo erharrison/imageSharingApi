@@ -9,4 +9,4 @@ class ImagePost(models.Model):
     dislikes = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.image
+        return self.caption
