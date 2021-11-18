@@ -4,29 +4,39 @@
     <title>Profile Page</title>
 </head>
 <body>
-    <h1>Profile Page</h1>
-    <hr>
-    {% if author.username == request.session.user%}
-    <h4>Name: {{ author.username }}</h4>
-    <span>Followers: {{ author.followers.count }}</span>
-    <br>
-    <span>Following: {{ author.following.count }}</span>
-    {% else %}
-    <h4>Name: {{ author.username }}</h4>
-    <span>Followers: {{ author.followers.count }}</span>
-    <br>
-    <span>Following: {{ author.following.count }}</span>
-    <h4>Profile is Private.</h4>
-    {% endif %}
-    <br><br>
+<h1>Profile Page</h1>
+<hr>
+{% if author.username == request.session.user%}
+<h4>Name: {{author.username}}</h4>
+<span>Followers: {{author.followers.count }}</span>
+<br>
+<span>Following: {{author.following.count }}</span>
+{% else %}
+<h4>Name: {{author.username}}</h4>
+<span>Followers: {{author.followers.count }}</span>
+<br>
+<span>Following: {{author.following.count }}</span>
+<h4>Profile is Private.</h4>
+{% endif %}
+<br><br>
 
-    {% if author.username != request.session.user%}
-    {% if is_followed %}
-        <a href="{% url 'follow' user_obj.name %}" style="border: 1px solid; background: red; padding:10px; color: white;">Unfollow</a>
-    {% else %}
-        <a href="{% url 'follow' user_obj.name %}" style="border: 1px solid; background: yellow; padding:10px; color: black;">Follow</a>
-    {% endif %}
+{% if author.username != request.session.user%}
+{% if is_followed %}
+<a href="{% url 'follow' user_obj.name %}" style="border: 1px solid; background: red; padding:10px; color: white;">Unfollow</a>
+{% else %}
+<a href="{% url 'follow' user_obj.name %}" style="border: 1px solid; background: yellow; padding:10px; color: black;">Follow</a>
+{% endif %}
 
-    {% endif %}
+{% endif %}
+{% if user.is_authenticated %}
+{% if user in author.following.all %}
+<a href="{% url 'followToggle' author=author.username  %}" class="btn btn-primary">Unfollow</a>
+{% else %}
+<a href="{% url 'followToggle' author=author.username  %}" class="btn btn-primary"> Follow </a>
+{% endif %}
+<button class="btn btn-outline-primary">Message</button>
+{% else %}
+<p class="text-muted"> please, login to follow </p>
+{% endif %}
 </body>
 </html>
