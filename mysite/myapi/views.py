@@ -4,14 +4,86 @@ from .serializers import ImagePostSerializer
 from .models import ImagePost, User
 from .forms import ImageForm
 
-from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 
 class ImagePostViewSet(viewsets.ModelViewSet):
     queryset = ImagePost.objects.all().order_by('image')
     serializer_class = ImagePostSerializer
+
+
+class PhotoListView(ListView):
+
+    model = ImagePost
+
+    template_name = 'mysite/list.html'
+
+    context_object_name = 'posts'
+
+
+class PhotoDetailView(DetailView):
+
+    model = ImagePost
+
+    template_name = 'mysite/detail.html'
+
+    context_object_name = 'photo'
+
+
+class PhotoCreateView(LoginRequiredMixin, CreateView):
+
+    model = ImagePost
+
+    fields = ['caption', 'author', 'image']
+
+    template_name = 'mysite/create.html'
+
+    success_url = reverse_lazy('photo:list')
+
+    def form_valid(self, form):
+
+        form.instance.submitter = self.request.user
+
+        return super().form_valid(form)
+
+
+class UserIsSubmitter(UserPassesTestMixin):
+
+    # Custom method
+    def get_photo(self):
+        return get_object_or_404(ImagePost, pk=self.kwargs.get('pk'))
+
+    def test_func(self):
+
+        if self.request.user.is_authenticated:
+            return self.request.user == self.get_photo().submitter
+        else:
+            raise PermissionDenied('Sorry you are not allowed here')
+
+
+class PhotoUpdateView(UserIsSubmitter, UpdateView):
+
+    template_name = 'mysite/update.html'
+
+    model = ImagePost
+
+    fields = ['caption', 'author', 'image']
+
+    success_url = reverse_lazy('photo:list')
+
+
+class PhotoDeleteView(UserIsSubmitter, DeleteView):
+
+    template_name = 'mysite/delete.html'
+
+    model = ImagePost
+
+    success_url = reverse_lazy('photo:list')
 
 
 def image_upload_view(request):
