@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class ImagePost(models.Model):
+    # class defining the model for a post of an image
     image = models.ImageField(upload_to='images')
     caption = models.TextField(max_length=100)
     author = models.CharField(max_length=30)
@@ -15,6 +16,7 @@ class ImagePost(models.Model):
 
 
 class User(models.Model):
+    # class defining a user of the app
     following = models.ManyToManyField(
         "self", blank=True, related_name="followers", symmetrical=False
     )

@@ -15,6 +15,12 @@ class ImagePostViewSet(viewsets.ModelViewSet):
 
 
 def image_upload_view(request):
+    """View for uploading an image with a post.
+
+    Keyword arguments:
+    request -- request to REST API
+    """
+
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES)
         if form.is_valid():
@@ -28,6 +34,13 @@ def image_upload_view(request):
 
 
 def profile(request, username):
+    """View for a user's profile.
+
+    Keyword arguments:
+    request -- request to REST API
+    username -- name of user
+    """
+
     user_profile = User.objects.get(username=username)
 
     data = {
@@ -37,6 +50,13 @@ def profile(request, username):
 
 
 def follow_toggle(request, author):
+    """Ability to follow and unfollow other users.
+
+    Keyword arguments:
+    request -- request to REST API
+    author -- current user's name
+    """
+
     author_obj = User.objects.get(username=author)
     current_user_obj = User.objects.get(username=request.user.username)
     following = author_obj.following.all()
